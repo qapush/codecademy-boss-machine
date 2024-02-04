@@ -13,7 +13,7 @@ module.exports = app;
 const PORT = process.env.PORT || 4001;
 
 // Logging middleware
-// app.use(morgan('tiny'));
+app.use(morgan('dev'));
 app.use(cors());
 app.use(express.static('public'));
 

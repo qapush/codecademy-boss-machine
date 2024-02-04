@@ -1,11 +1,50 @@
-const express = require('express');
+const express = require("express");
 const apiRouter = express.Router();
-const minionsRouter = require('./minions');
-const ideasRouter = require('./ideas');
-const meetingsRouter = require('./meetings');
+const checkMillionDollarIdea = require('./checkMillionDollarIdea');
 
-apiRouter.use('/minions', minionsRouter);
-apiRouter.use('/ideas', ideasRouter);
-apiRouter.use('/meetings', meetingsRouter);
+const {
+  getAllFromDatabase,
+  addToDatabase,
+  getFromDatabaseById,
+  updateInstanceInDatabase,
+  deleteFromDatabasebyId,
+  createMeeting,
+  deleteAllFromDatabase,
+} = require("./db");
+
+apiRouter.param("type", (req, res, next, type) => {
+  req.type = type;
+  next();
+});
+
+apiRouter.param("id", (req, res, next, id) => {
+  req.id = id;
+  next();
+});
+
+apiRouter.get("/:type", (req, res, next) => {
+  res.send(getAllFromDatabase(req.type));
+});
+
+apiRouter.post("/:type", checkMillionDollarIdea, (req, res, next) => {
+  const newObject = req.type == "meetings" ? createMeeting() : req.body;
+  res.send(addToDatabase(req.type, newObject));
+});
+
+apiRouter.get("/:type/:id", (req, res, next) => {
+  res.send(getFromDatabaseById(req.type, req.id));
+});
+
+apiRouter.put("/:type/:id", checkMillionDollarIdea, (req, res, next) => {
+  res.send(updateInstanceInDatabase(req.type, req.body));
+});
+
+apiRouter.delete("/:type/:id", (req, res, next) => {
+  res.send(deleteFromDatabasebyId(req.type, req.id));
+});
+
+apiRouter.delete("/:type", (req, res, next) => {
+  res.send(deleteAllFromDatabase(req.type));
+});
 
 module.exports = apiRouter;
