@@ -5,13 +5,12 @@ import Meeting from './Meeting';
 import { createMeetingThunk } from '../store/meetings';
 
 class AllMeetings extends Component {
-
   constructor(props) {
     super(props);
     this.state = {
       timeoutId: null,
       timeoutTime: 5000,
-    }
+    };
   }
 
   componentDidMount() {
@@ -23,8 +22,12 @@ class AllMeetings extends Component {
         timeoutId,
         timeoutTime: Math.random() * 10000 + 3000,
       });
-    }
+    };
     addMeeting();
+  }
+
+  componentDidUpdate() {
+    console.log(this.props);
   }
 
   componentWillUnmount() {
@@ -32,15 +35,13 @@ class AllMeetings extends Component {
   }
 
   render() {
-    const allMeetings = this.props.meetings.map(meeting => {
-      return <Meeting key={meeting.date} day={meeting.day} time={meeting.time} note={meeting.note} />
+    const allMeetings = this.props.meetings.map((meeting, id) => {
+      return <Meeting key={id} day={meeting.day} time={meeting.time} note={meeting.note} />;
     });
-  
+
     return (
       <div id="meetings-landing">
-        <div className="label meetings-label">
-          Meetings
-        </div>
+        <div className="label meetings-label">Meetings</div>
         <div id="meetings-table">
           <table>
             <thead>
@@ -50,23 +51,20 @@ class AllMeetings extends Component {
                 <th id="th-note">Note</th>
               </tr>
             </thead>
-            <tbody>
-              { allMeetings }
-            </tbody>
+            <tbody>{allMeetings}</tbody>
           </table>
         </div>
       </div>
-    )
+    );
   }
 }
 
 const mapState = ({ meetings }) => ({ meetings });
 
-const mapDispatch = dispatch => ({
+const mapDispatch = (dispatch) => ({
   createMeeting: () => {
     dispatch(createMeetingThunk());
-  }
+  },
 });
 
 export default connect(mapState, mapDispatch)(AllMeetings);
-
